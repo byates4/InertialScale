@@ -1,4 +1,4 @@
-function [scale,gravity,bias] = ...
+function [scale,gravity,bias,x,freqRange] = ...
     estimateScale(A,b,scale0,gravity0,bias0,t)
 % Estimation is performed in the frequency domain
 
@@ -11,7 +11,7 @@ N = length(t);
 fmax = 1.2;
 fs = 1/mean(diff(t));
 f = fs*(0:(N/2))/N;
-freqRange = (f <= fmax);
+freqRange = (f <= fmax)
 fprintf('Upper limit for the frequencies = %.2f Hz\n',fmax);
 
 % Optimize while enforcing gravity constraint: norm(g) = 9.82

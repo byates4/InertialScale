@@ -13,7 +13,7 @@ function [accImu, angImu, timeImu] = readInertial(dataset)
 fprintf('%s', repmat('-', 1, 60));
 fprintf('\nReading inertial data (%s)\n', dataset);
 
-basePath = sprintf('../data/%s/',dataset);
+basePath = sprintf('%s/',dataset)
 
 % Read accelerometer readings
 if exist([basePath 'accelerometer.txt'],'file')

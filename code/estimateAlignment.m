@@ -1,5 +1,5 @@
-function [Rs,td,bg] = estimateAlignment(qtVis,tVis,angImu,tImu)
-%
+function [Rs,td,bg,flist,tdlist] = estimateAlignment(qtVis,tVis,angImu,tImu)
+global angVis
 % Estimate temporal and spatial alignment between the camera and IMU.
 % Gyroscope bias is also estimated in the process.
 %
@@ -47,7 +47,7 @@ angImu(:,3) = smooth(angImu(:,3),15);
 gRatio = (1 + sqrt(5)) / 2;
 tolerance = 0.0001;
 
-maxOffset = 0.5;
+maxOffset = 5.5;
 a = -maxOffset;
 b = maxOffset;
 
@@ -55,7 +55,8 @@ c = b - (b - a) / gRatio;
 d = a + (b - a) / gRatio;
 
 iter = 0;
-
+flist = [c];
+tdlist = [d];
 while abs(c - d) > tolerance
    
      % Evaluate function at f(c) and f(d)
@@ -76,9 +77,12 @@ while abs(c - d) > tolerance
     d = a + (b - a) / gRatio;
     
     iter = iter + 1;
+    flist(iter) = fd;
+    tdlist(iter) = d;
 end
 
 td = (b + a) / 2;
+
 
 fprintf('Golden-section search (%.0f iterations)\n', iter);
 fprintf('Finished in %.3f seconds\n', toc);
@@ -104,12 +108,22 @@ function [Rs,bias,f] = solveClosedForm(angVis,angImu,t,td)
 %
 
 % Adjust visual angular velocities based on current offset
-angVis = interp1(t-td,angVis,t,'linear','extrap');
-N = size(angVis,1);
+global angVis1 angImu1
+angVis1 = interp1(t-td,angVis,t,'linear',0);
+
+
+for i = 1:length(angVis1(:,1))
+    if angVis1(i,1) == 0
+        angImu(i,:) = 0;
+    end
+end
+
+angImu1 = angImu
+N = size(angVis1,1);
 
 % Compute mean vectors
 meanImu = repmat(mean(angImu),N,1);
-meanVis = repmat(mean(angVis),N,1);
+meanVis = repmat(mean(angVis1),N,1);
 
 % Compute centralized point sets
 P = angImu - meanImu;
@@ -127,11 +141,13 @@ end
 Rs = V*C*U';
 
 % Find the translation, which is the gyroscope bias
-bias = mean(angVis) - mean(angImu)*Rs;
+bias = mean(angVis1) - mean(angImu)*Rs;
+
+
 
 % Residual
-D = angVis - (angImu*Rs + repmat(bias,N,1));
-f = sum(D(:).^2);
+D = angVis1 - (angImu*Rs + repmat(bias,N,1));
+f = sum(D(:).^2)/length(D(:,1));
 
 end
 

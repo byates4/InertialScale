@@ -14,7 +14,8 @@ function [posVis, qtVis, timeVis, scaleGT] = readVisual(dataset)
 fprintf('%s', repmat('-', 1, 60));
 fprintf('\nReading visual data (%s)\n', dataset);
 
-basePath = sprintf('../data/%s/',dataset);
+basePath = sprintf('%s/',dataset)
+basePath
 
 % Read camera poses
 if exist([basePath 'poses.txt'],'file')

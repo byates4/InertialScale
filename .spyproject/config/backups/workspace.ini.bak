@@ -1,0 +1,10 @@
+[workspace]
+restore_data_on_startup = True
+save_data_on_exit = True
+save_history = True
+save_non_project_files = False
+
+[main]
+version = 0.2.0
+recent_files = ['code\\kalmanRTS.m', 'code\\readVisual.m', 'readVisual.py', 'code\\ScaleEstimationMain.m', 'KalmanRTS.py', 'code\\alignCameraIMU.m', 'code\\estimateAlignment.m', 'code\\initializeEstimates.m', 'code\\estimateScale.m', 'code\\readInertial.m', 'code\\quaternions\\qt_dot_F.m', 'code\\quaternions\\qt_demo2.m', 'code\\quaternions\\qt_log.m', 'code\\quaternions\\qt_exp.m', 'code\\quaternions\\qt_dircos2quat_e.m', 'code\\quaternions\\qt_mul.m', 'code\\quaternions\\qt_norm.m', 'code\\quaternions\\qt_conj.m']
+
